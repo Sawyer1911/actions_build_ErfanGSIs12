@@ -1,6 +1,5 @@
 # ErfanGSIs-build
 Language: 中文 / <a href=README_EN.md> En </a> </span>
-> Version: 1-canary
 ## 一个自动跑 ErfanGSIs 的脚本。 
 ### 步骤如下： 
 - 首先，fork 这个仓库。 
