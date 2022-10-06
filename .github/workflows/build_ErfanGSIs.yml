@@ -70,11 +70,13 @@ jobs:
               fi
               ls "upload"   
               
-       - name: Upload GSI to Releases
-         uses: actions/upload-artifact@v3
+       - name: Upload GSI to action-release
+         uses: ncipollo/release-action@v1.8.6
          with:
-           name: ${{github.event.inputs.RELEASES_NAME}}
-           path: ErfanGSIs/output/upload/*
+           artifacts: ErfanGSIs/output/upload/*
+           name: ${{ github.event.inputs.RELEASES_NAME }}
+           tag: ${{ github.event.inputs.RELEASES_NAME }}
+           token: ${{ secrets.GITHUB_TOKEN }}
            
        - name: Upload GSI to Wetrancefer
          run: |
