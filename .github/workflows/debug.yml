@@ -33,7 +33,7 @@ jobs:
               cd $GITHUB_WORKSPACE/ErfanGSIs
               mkdir ./output
               sudo apt-get install python3-pip
-              sudo apt-get install unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack arj cabextract file-roller device-tree-compiler liblzma-dev python-pip brotli liblz4-tool gawk aria2
+              sudo apt-get install unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack arj cabextract file-roller device-tree-compiler liblzma-dev python3-pip brotli liblz4-tool gawk aria2
               pip install backports.lzma pycrypto protobuf
 
        - name: Download Stock Rom
