@@ -1,4 +1,4 @@
-name: ErfanGSIs-build-AB(debug)
+name: ErfanGSIs-build-AB
 
 on: 
   workflow_dispatch:
