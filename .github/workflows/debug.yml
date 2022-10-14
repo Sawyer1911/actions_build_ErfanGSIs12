@@ -1,0 +1,66 @@
+name: ErfanGSIs-build-AB(debug)
+
+on: 
+  workflow_dispatch:
+    inputs:
+      ROM_URL:
+        description: 'ROM_URL'
+        required: true
+      ROM_TYPE:
+        description: 'ROM_TYPE'
+        required: true
+      RELEASES_NAME: 
+        description: 'RELEASES_NAME'
+        required: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+       - name: Checkout
+         uses: actions/checkout@master
+
+       - name: Initialization environment
+         run: |
+            sudo -E apt-get -qq install git wget
+       
+       - name: Clone ErfanGSI Source Code
+         run: | 
+            git clone --recurse-submodules https://github.com/erfanoabdi/ErfanGSIs.git ErfanGSIs  
+       
+       - name: Setting up ErfanGSI requirements
+         run: |
+              cd $GITHUB_WORKSPACE/ErfanGSIs
+              mkdir ./output
+              sudo apt-get install python3-pip
+              sudo apt-get install unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack arj cabextract file-roller device-tree-compiler liblzma-dev python-pip brotli liblz4-tool gawk aria2
+              pip install backports.lzma pycrypto protobuf
+
+       - name: Download Stock Rom
+         run: |
+              cd ErfanGSIs
+              sudo bash ./url2GSI.sh -c --ab "${{ github.event.inputs.ROM_URL }}" "${{ github.event.inputs.ROM_TYPE }}"
+              
+       - name: 7Zip GSI  
+         run: |
+              cd ErfanGSIs/output
+              7za a -t7z -r GSI.7z ./*
+              if [[ $(du -sb "GSI.7z" | awk '{print $1}') -gt 2097152000 ]];then
+                  echo -e "split packaging..."
+                  tar -cpzf - "GSI.7z" | split -d -b 1024m - "upload/GSI.7z"
+              else
+                  mv GSI.7z upload/
+              fi  
+              
+       - name: Upload GSI to action-release
+         uses: ncipollo/release-action@v1.8.6
+         with:
+           artifacts: ErfanGSIs/output/upload/*
+           name: ${{ github.event.inputs.RELEASES_NAME }}
+           tag: ${{ github.event.inputs.RELEASES_NAME }}
+           token: ${{ secrets.GITHUB_TOKEN }}
+           
+       - name: Upload GSI to Wetrancefer
+         run: |
+              curl -sL https://git.io/file-transfer | sh
+              ./transfer wet ErfanGSIs/output/upload/*
